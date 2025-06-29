@@ -1,0 +1,22 @@
+#!/bin/bash
+#PBS -P kt24
+#PBS -q gpuvolta
+#PBS -l walltime=48:00:00
+#PBS -l ncpus=12
+#PBS -l ngpus=1
+#PBS -l mem=32GB
+#PBS -l jobfs=10GB
+#PBS -l storage=scratch/kt24
+#PBS -N HAPPO
+#PBS -o /scratch/kt24/jq6720/output.log
+#PBS -e /scratch/kt24/jq6720/error.log
+#PBS -l wd
+
+module purge
+module load python3/3.9.2
+module load cuda/11.6.1
+module load cudnn/8.6.0-cuda11
+source /scratch/kt24/jq6720/envs/harl_env/bin/activate
+
+python3 /scratch/kt24/jq6720/HARL/HARL/HARL/examples/train.py --algo happo --env pettingzoo_mpe --exp_name MPE_HAPPO_FORMAL_GADI
+

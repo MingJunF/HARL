@@ -1,0 +1,19 @@
+env: bsk
+env_args:
+  map_name: Scenario1
+  Target_type: SparseTarget
+  Num_targets: 60
+  Target_density: 400000
+  rewarder: UniqueImageReward
+  Sat_orb_param: "2SatCluster.xlsx" 
+  Target_param: Default
+  render: False
+
+
+test_greedy: True
+test_nepisode: 1
+test_interval: 999999999
+log_interval: 10000
+runner_log_interval: 10000
+learner_log_interval: 10000
+t_max: 25050000

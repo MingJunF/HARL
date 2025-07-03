@@ -36,6 +36,7 @@ def main():
         type=str,
         default="pettingzoo_mpe",
         choices=[
+            "SatBench",
             "smac",
             "mamujoco",
             "pettingzoo_mpe",

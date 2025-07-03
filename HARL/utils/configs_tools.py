@@ -47,7 +47,9 @@ def update_args(unparsed_dict, *args):
 
 def get_task_name(env, env_args):
     """Get task name."""
-    if env == "smac":
+    if env == "SatBench":
+        task = env_args["env"]
+    elif env == "smac":
         task = env_args["map_name"]
     elif env == "smacv2":
         task = env_args["map_name"]

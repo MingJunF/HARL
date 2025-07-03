@@ -55,7 +55,11 @@ def make_train_env(env_name, seed, n_threads, env_args):
 
     def get_env_fn(rank):
         def init_env():
-            if env_name == "smac":
+            if env_name == "SatBench":
+                from harl.envs.Bsk_wrapper import BSKWrapper
+
+                env = BSKWrapper(env_args)
+            elif env_name == "smac":
                 from harl.envs.smac.StarCraft2_Env import StarCraft2Env
 
                 env = StarCraft2Env(env_args)
@@ -115,7 +119,11 @@ def make_eval_env(env_name, seed, n_threads, env_args):
 
     def get_env_fn(rank):
         def init_env():
-            if env_name == "smac":
+            if env_name == "SatBench":
+                from harl.envs.Bsk_wrapper import BSKWrapper
+
+                env = BSKWrapper(env_args)
+            elif env_name == "smac":
                 from harl.envs.smac.StarCraft2_Env import StarCraft2Env
 
                 env = StarCraft2Env(env_args)
@@ -168,7 +176,11 @@ def make_render_env(env_name, seed, env_args):
     manual_expand_dims = True  # manually expand the num_of_parallel_envs dimension
     manual_delay = True  # manually delay the rendering by time.sleep()
     env_num = 1  # number of parallel envs
-    if env_name == "smac":
+    if env_name == "SatBench":
+        from harl.envs.BSKWrapper import BSKWrapper
+
+        env = BSKWrapper(env_args)
+    elif env_name == "smac":
         from harl.envs.smac.StarCraft2_Env import StarCraft2Env
 
         env = StarCraft2Env(args=env_args)

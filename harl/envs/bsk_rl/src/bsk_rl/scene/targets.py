@@ -441,7 +441,7 @@ class DenseTarget(Scenario):
                     Target(
                         name=f"cluster_{task}_target_{target_index}",
                         r_LP_P=target_pos,
-                        priority=self.priority_distribution(),
+                        priority=1,
                         Round=task 
                     )
                 )
@@ -768,7 +768,7 @@ class SparseTarget(Scenario):
                     Target(
                         name=f"cluster_{task}_target_{target_index}",
                         r_LP_P=target_pos,
-                        priority=self.priority_distribution(),
+                        priority=1,
                         Round=task
                     )
                 )

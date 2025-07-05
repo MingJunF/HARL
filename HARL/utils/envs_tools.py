@@ -253,7 +253,9 @@ def set_seed(args):
 
 def get_num_agents(env, env_args, envs):
     """Get the number of agents in the environment."""
-    if env == "smac":
+    if env == "SatBench":
+        return envs.n_agents
+    elif env == "smac":
         from harl.envs.smac.smac_maps import get_map_params
 
         return get_map_params(env_args["map_name"])["n_agents"]

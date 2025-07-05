@@ -124,36 +124,39 @@ class RevisitImageReward(GlobalReward):
     def calculate_reward(
         self, new_data_dict: dict[str, RevisitImageData]
     ) -> dict[str, float]:
-        reward = {}
+        reward = {sat_id: 0.0 for sat_id in new_data_dict}
+        all_new_images = defaultdict(list)  # {target: [(sat_id, time)]}
 
         for sat_id, new_data in new_data_dict.items():
-            reward[sat_id] = 0.0
-            for target, count in new_data.imaged_count.items():
-                prev_times = self.data.image_times.get(target, [])
-                new_times = new_data.image_times.get(target, [])
-                revisit_num = int(24 / target.Round) if target.Round > 0 else 1
-                min_valid_interval = max(0.0, target.Round * 3600 - 1800)
+            for target, times in new_data.image_times.items():
+                for t in times:
+                    all_new_images[target].append((sat_id, t))
 
-                # Track revisit-valid new images only
-                valid_revisits = 0
-                legal_times = list(prev_times)  # history to compare against
+        for target, observations in all_new_images.items():
+            if self.Completeness.get(target, 0.0) >= 1.0:
+                continue 
 
-                for t in sorted(new_times):
-                    is_valid = False
-                    for t_prev in legal_times:
-                        if t - t_prev >= min_valid_interval:
-                            is_valid = True
-                            break
-                    if is_valid or not legal_times:
-                        reward[sat_id] += target.priority
-                        valid_revisits += 1
-                        legal_times.append(t)
+            observations.sort(key=lambda x: x[1])
+            rewarded_sats = set()
 
-                # Update completeness for analysis or bonus if needed
-                completion_ratio = min(1.0, valid_revisits / revisit_num)
-                self.Completeness[target] = completion_ratio
+            for i in range(len(observations)):
+                sat_i, t_i = observations[i]
+                for j in range(i + 1, len(observations)):
+                    sat_j, t_j = observations[j]
+                    if sat_i == sat_j:
+                        continue
+                    if abs(t_j - t_i) <= 60:
+                        reward[sat_i] += target.priority
+                        reward[sat_j] += target.priority
+
+                        self.Completeness[target] = 1.0
+                        break
+                else:
+                    continue
+                break 
 
         return reward
+
 
 
 

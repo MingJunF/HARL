@@ -78,7 +78,17 @@ if TYPE_CHECKING:  # pragma: no cover
     from bsk_rl.sim import Simulator
     from bsk_rl.sim.world import WorldModel
 
+def default_sigma_init():
+    return random_tumble(maxSpinRate=0.0001)[0]
 
+def default_omega_init():
+    return random_tumble(maxSpinRate=0.0001)[1]
+
+def default_wheel_speeds():
+    return np.random.uniform(-1500, 1500, 3)
+
+def default_stored_charge_init():
+    return np.random.uniform(30.0 * 3600.0, 70.0 * 3600.0)
 class DynamicsModel(ABC):
     """Abstract Basilisk dynamics model."""
 
@@ -268,6 +278,7 @@ class BasicDynamicsModel(DynamicsModel):
         """Wheel speeds normalized by maximum allowable speed."""
         return self.wheel_speeds / (self.maxWheelSpeed * macros.rpm2radsec)
 
+
     def _setup_dynamics_objects(self, **kwargs) -> None:
         self.setup_spacecraft_hub(**kwargs)
         self.setup_drag_effector(**kwargs)
@@ -286,8 +297,8 @@ class BasicDynamicsModel(DynamicsModel):
         width=1.38,
         depth=1.04,
         height=1.58,
-        sigma_init=lambda: random_tumble(maxSpinRate=0.0001)[0],
-        omega_init=lambda: random_tumble(maxSpinRate=0.0001)[1],
+        sigma_init=default_sigma_init,
+        omega_init=default_omega_init,
         rN=None,
         vN=None,
         oe=random_orbit,
@@ -481,7 +492,7 @@ class BasicDynamicsModel(DynamicsModel):
         return np.linalg.norm(self.r_BN_N) > (orbitalMotion.REQ_EARTH + 200) * 1e3
 
     @default_args(
-        wheelSpeeds=lambda: np.random.uniform(-1500, 1500, 3),
+        wheelSpeeds=default_wheel_speeds,
         maxWheelSpeed=np.inf,
         u_max=0.200,
     )
@@ -612,7 +623,7 @@ class BasicDynamicsModel(DynamicsModel):
 
     @default_args(
         batteryStorageCapacity=80.0 * 3600.0,
-        storedCharge_Init=lambda: np.random.uniform(30.0 * 3600.0, 70.0 * 3600.0),
+        storedCharge_Init=default_stored_charge_init,
     )
     def setup_battery(
         self,

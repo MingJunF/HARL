@@ -163,9 +163,9 @@ After training, users can check the log file, tensorboard output, experiment con
 To enable batch running, we allow users to modify yaml configs in the command line. For each training command, users specify the special parameters in the commands with the same names as in the config files. For example, if you want to run HAPPO on SMAC tasks under three random seeds. You can customize the configs and replace `train.sh` with the following commands:
 
 ```shell
-for seed in $(seq 1 3)
+for seed in $(seq 1 1)
 do
-	python train.py --algo happo --env smac --exp_name test --seed $seed
+	python train.py --algo mappo --env SatBench --exp_name test --seed $seed
 done
 ```
 

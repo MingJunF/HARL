@@ -6,7 +6,7 @@ from gymnasium import spaces
 from Basilisk.utilities import orbitalMotion, macros
 from Basilisk.utilities.orbitalMotion import ClassicElements
 from Basilisk.architecture import bskLogging
-
+from gymnasium.spaces import Box, Discrete
 from bsk_rl import act, obs, sats
 from bsk_rl.sim import dyn, fsw, world
 from bsk_rl.data.unique_image_data import UniqueImageReward
@@ -66,15 +66,6 @@ class MultiAgentEnv(object):
     def save_replay(self):
         raise NotImplementedError
 
-    def get_env_info(self):
-        env_info = {
-            "state_shape": self.get_state_size(),
-            "obs_shape": self.get_obs_size(),
-            "n_actions": self.get_total_actions(),
-            "n_agents": self.n_agents,
-            "episode_limit": self.episode_limit,
-        }
-        return env_info
 
     def get_stats(self):
         return {}
@@ -156,7 +147,7 @@ def create_env(map_name, Target_type="SparseTarget", Num_targets=60,Target_densi
     scenario_module = __import__("bsk_rl.scene.targets", fromlist=[Target_type])
     scenario_cls = getattr(scenario_module, Target_type)
     scenario = scenario_cls(n_targets=Num_targets,cluster_radius=Target_density)
-    rewarder = UniqueImageReward()
+    rewarder = RevisitImageReward()
 
     env = ConstellationTasking(
         satellites=satellites,
@@ -178,15 +169,13 @@ class BSKWrapper(MultiAgentEnv):
     def __init__(self, env_args):
         self.map_name = env_args.get("map_name", "Scenario1")
         self.Target_type = env_args.get("Target_type", "SparseTarget")
-        self.Num_targets = env_args.get("Num_targets", 60)
+        self.Num_targets = env_args.get("Num_targets", 300)
         self.Target_density = env_args.get("Target_density", 400000)
-        self.Sat_orb_param = env_args.get("Sat_orb_param", "2SatCluster.xlsx")
+        self.Sat_orb_param = env_args.get("Sat_orb_param", "6SatsTrailingConstellation.xlsx")
         self.render = env_args.get("render", False)
 
-        # 🔒 安全检查
         assert isinstance(self.Sat_orb_param, str), f"Sat_orb_param must be a string, got {type(self.Sat_orb_param)}"
 
-        # 🌍 创建真实环境
         self.env, self.total_targets = create_env(
             map_name=self.map_name,
             Sat_orb_param=self.Sat_orb_param,
@@ -194,9 +183,9 @@ class BSKWrapper(MultiAgentEnv):
             Target_density=self.Target_density,
             render=self.render,
         )
+        self.env.reset()
         self.episode_limit = self.env.episode_limit
         self.n_agents = len(self.env.satellites)
-        self.env.reset()
 
 
     def _get_rewarder_cls(self, rewarder_name):
@@ -212,12 +201,18 @@ class BSKWrapper(MultiAgentEnv):
     def step(self, actions):
         actions_dict = {self.env.agents[i]: int(actions[i]) for i in range(len(actions))}
         observation, reward_dict, terminated, truncated, info, completeness = self.env.step(actions_dict)
-        total_reward = sum(reward_dict.values())
-        info_dict = {}
-        if terminated:
-            info_dict["Task_completion_rate"] = len(completeness) / self.total_targets
-        terminated = any(terminated.values()) or any(truncated.values())
-        return observation, total_reward, terminated, truncated, info_dict
+
+        rews = np.array([reward_dict[agent] for agent in self.env.possible_agents]).reshape(self.n_agents, 1)
+        dones = np.array([terminated[agent] or truncated[agent] for agent in self.env.possible_agents])
+        infos = [{} for _ in range(self.n_agents)]
+        obs = self.get_obs()
+        share_obs_vec = self.get_state()
+        share_obs = [share_obs_vec.copy() for _ in range(self.n_agents)]
+        avail_actions = self.get_avail_actions()
+
+        return obs, share_obs, rews, dones, infos, avail_actions
+
+
 
     def get_obs(self):
         return [self.env._get_obs()[agent_id] for agent_id in self.env.possible_agents]
@@ -252,8 +247,24 @@ class BSKWrapper(MultiAgentEnv):
         return len(self.get_avail_agent_actions(0))
 
     def reset(self):
-        obs, _ = self.env.reset()
-        return obs
+        self.env.reset()
+
+        # obs: list of [obs_dim] per agent
+        obs_list = self.get_obs()  # len = n_agents, each of shape (obs_dim,)
+        obs_array = [np.array(obs) for obs in obs_list]  # list of np.array, shape (obs_dim,)
+        
+        # share_obs: list of shared state for each agent
+        share_obs = self.get_state()  # shape = (state_dim,)
+        share_obs_array = [share_obs.copy() for _ in range(self.n_agents)]  # list of shape (state_dim,)
+
+        # available actions: list of [n_actions] per agent
+        avail_actions = self.get_avail_actions()  # list of shape (n_actions,) per agent
+
+        return obs_array, share_obs_array, avail_actions
+
+
+
+
 
     def render(self):
         self.env.render()
@@ -265,7 +276,19 @@ class BSKWrapper(MultiAgentEnv):
     def seed(self, seed=None):
         self._seed = seed
         np.random.seed(seed)
-
+    def get_env_info(self):
+        print("[DEBUG] get_env_info called")
+        print("[DEBUG] self.n_agents:", getattr(self, "n_agents", "NOT SET"))
+        print("[DEBUG] self.episode_limit:", getattr(self, "episode_limit", "NOT SET"))
+        env_info = {
+            "state_shape": self.get_state_size(),
+            "obs_shape": self.get_obs_size(),
+            "n_actions": self.get_total_actions(),
+            "n_agents": self.n_agents,
+            "episode_limit": self.episode_limit,
+        }
+        print("[DEBUG] env_info returned:", env_info)
+        return env_info
 
     def save_replay(self):
         pass
@@ -277,10 +300,25 @@ class BSKWrapper(MultiAgentEnv):
         return None
     @property
     def observation_space(self):
-        return self.env.observation_space  
+        return [self.env.observation_space(agent) for agent in self.env.possible_agents]
+
     @property
     def action_space(self):
-        return self.env.action_space
+        return [self.env.action_space(agent) for agent in self.env.possible_agents]
+
+
     @property
     def share_observation_space(self):
-        return self.env.action_space
+        obs_dim = self.get_state_size()
+        share_obs = Box(low=-np.inf, high=np.inf, shape=(obs_dim,), dtype=np.float32)
+        return [share_obs for _ in range(self.n_agents)]
+
+
+
+
+from harl.common.base_logger import BaseLogger
+
+
+class SatBenchLogger(BaseLogger):
+    def get_task_name(self):
+        return f"SatBench_{self.env_args.get('map_name', 'default')}"

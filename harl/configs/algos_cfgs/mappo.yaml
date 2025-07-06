@@ -21,7 +21,7 @@ train:
   # logging interval
   log_interval: 5
   # evaluation interval
-  eval_interval: 50
+  eval_interval: 25
   # whether to use ValueNorm
   use_valuenorm: True
   # whether to use linear learning rate decay

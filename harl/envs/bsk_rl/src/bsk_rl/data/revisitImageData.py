@@ -145,7 +145,7 @@ class RevisitImageReward(GlobalReward):
                     sat_j, t_j = observations[j]
                     if sat_i == sat_j:
                         continue
-                    if abs(t_j - t_i) <= 60:
+                    if abs(t_j - t_i) <= 300:
                         reward[sat_j] += 1
 
                         self.Completeness[target] = 1.0

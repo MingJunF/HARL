@@ -86,7 +86,7 @@ class CustomSatComposed(sats.ImagingSatellite):
             dict(prop="priority"),
             dict(prop="r_LP_P", norm=orbitalMotion.REQ_EARTH * 1e3),
             dict(prop="target_angle", norm=np.pi),
-            n_ahead_observe=7,
+            n_ahead_observe=30,
         ),
         obs.NearbySatellitesAttitude()
     ]

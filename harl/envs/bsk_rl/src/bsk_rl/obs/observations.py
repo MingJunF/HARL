@@ -321,7 +321,7 @@ class NearbySatellitesAttitude(Observation):
         """
         super().__init__(name=name)
         self.norm = norm
-        self.threshold_m = threshold_km * 1000  # convert to meters
+        self.threshold_m = threshold_km * 500  # convert to meters
         self.max_sat_count = 5  # because 5 sats × 3 dims = 15 dims total
 
     def get_obs(self) -> dict[str, Any]:

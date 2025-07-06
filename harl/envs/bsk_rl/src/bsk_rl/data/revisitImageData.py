@@ -146,8 +146,7 @@ class RevisitImageReward(GlobalReward):
                     if sat_i == sat_j:
                         continue
                     if abs(t_j - t_i) <= 60:
-                        reward[sat_i] += target.priority
-                        reward[sat_j] += target.priority
+                        reward[sat_j] += 1
 
                         self.Completeness[target] = 1.0
                         break

@@ -202,7 +202,9 @@ class BSKWrapper(MultiAgentEnv):
         actions_dict = {self.env.agents[i]: int(actions[i]) for i in range(len(actions))}
         observation, reward_dict, terminated, truncated, info, completeness = self.env.step(actions_dict)
 
-        rews = np.array([reward_dict[agent] for agent in self.env.possible_agents]).reshape(self.n_agents, 1)
+        common_reward = sum(reward_dict[agent] for agent in self.env.possible_agents)
+        rews = [[common_reward]] * self.n_agents
+
         dones = np.array([terminated[agent] or truncated[agent] for agent in self.env.possible_agents])
         infos = [{} for _ in range(self.n_agents)]
         obs = self.get_obs()
@@ -211,6 +213,8 @@ class BSKWrapper(MultiAgentEnv):
         avail_actions = self.get_avail_actions()
 
         return obs, share_obs, rews, dones, infos, avail_actions
+
+
 
 
 

@@ -13,11 +13,11 @@ device:
   torch_threads: 4
 train:
   # number of parallel environments for training data collection
-  n_rollout_threads: 20
+  n_rollout_threads: 10
   # number of total training steps
   num_env_steps: 15000000
   # number of steps per environment per training data collection
-  episode_length: 150
+  episode_length: 1575
   # logging interval
   log_interval: 5
   # evaluation interval
@@ -34,9 +34,9 @@ eval:
   # whether to use evaluation
   use_eval: True
   # number of parallel environments for evaluation
-  n_eval_rollout_threads: 10
+  n_eval_rollout_threads: 5
   # number of episodes per evaluation
-  eval_episodes: 10
+  eval_episodes: 5
 render:
   # whether to use render
   use_render: False

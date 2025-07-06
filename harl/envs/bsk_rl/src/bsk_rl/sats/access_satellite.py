@@ -439,18 +439,18 @@ class AccessSatellite(Satellite):
             sim_time = self.simulator.sim_time
             upcoming_opportunities = self.upcoming_opportunities
 
-            import csv, os
-            os.makedirs("opportunity_logs", exist_ok=True)
-            with open(f"opportunity_logs/{self.name}_opportunities.csv", "w", newline="") as csvfile:
-                writer = csv.writer(csvfile)
-                writer.writerow(["satellite", "target", "start_time", "end_time"])
-                for opp in upcoming_opportunities:
-                    writer.writerow([
-                        self.name,
-                        opp["object"].id if hasattr(opp["object"], "id") else str(opp["object"]),
-                        opp["window"][0],
-                        opp["window"][1]
-                    ])
+            # import csv, os
+            # os.makedirs("opportunity_logs", exist_ok=True)
+            # with open(f"opportunity_logs/{self.name}_opportunities.csv", "w", newline="") as csvfile:
+            #     writer = csv.writer(csvfile)
+            #     writer.writerow(["satellite", "target", "start_time", "end_time"])
+            #     for opp in upcoming_opportunities:
+            #         writer.writerow([
+            #             self.name,
+            #             opp["object"].id if hasattr(opp["object"], "id") else str(opp["object"]),
+            #             opp["window"][0],
+            #             opp["window"][1]
+            #         ])
 
             next_opportunities = []
             for opportunity in upcoming_opportunities:

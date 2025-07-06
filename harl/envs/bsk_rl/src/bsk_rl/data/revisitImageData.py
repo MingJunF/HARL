@@ -125,34 +125,42 @@ class RevisitImageReward(GlobalReward):
         self, new_data_dict: dict[str, RevisitImageData]
     ) -> dict[str, float]:
         reward = {sat_id: 0.0 for sat_id in new_data_dict}
-        all_new_images = defaultdict(list)  # {target: [(sat_id, time)]}
+        all_observations = defaultdict(list)  # {target: [(sat_id, time)]}
+
 
         for sat_id, new_data in new_data_dict.items():
             for target, times in new_data.image_times.items():
                 for t in times:
-                    all_new_images[target].append((sat_id, t))
+                    all_observations[target].append((sat_id, t))
 
-        for target, observations in all_new_images.items():
+
+        for target, times in self.data.image_times.items():
+            for t in times:
+                all_observations[target].append(("HIST", t))
+
+
+        for target, observations in all_observations.items():
             if self.Completeness.get(target, 0.0) >= 1.0:
+                continue
+
+            observations.sort(key=lambda x: x[1])  
+
+            first_sat = None
+            first_time = None
+            for sat_id, t in observations:
+                if sat_id != "HIST":
+                    reward[sat_id] += 0.1
+                    first_sat = sat_id
+                    first_time = t
+                    break
+
+            if first_sat is None:
                 continue 
-
-            observations.sort(key=lambda x: x[1])
-            rewarded_sats = set()
-
-            for i in range(len(observations)):
-                sat_i, t_i = observations[i]
-                for j in range(i + 1, len(observations)):
-                    sat_j, t_j = observations[j]
-                    if sat_i == sat_j:
-                        continue
-                    if abs(t_j - t_i) <= 300:
-                        reward[sat_j] += 1
-
-                        self.Completeness[target] = 1.0
-                        break
-                else:
-                    continue
-                break 
+            for sat_id, t in observations:
+                if sat_id != first_sat and sat_id != "HIST" and abs(t - first_time) <= 300:
+                    reward[sat_id] += 0.9
+                    self.Completeness[target] = 1.0
+                    break
 
         return reward
 

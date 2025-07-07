@@ -962,53 +962,18 @@ class SatBenchContinuousImagingFSWModel(ImagingFSWModel):
         self.dynamics.instrumentPowerSink.powerStatus = 1
         # Step 1: Define rotations
         angle_step = 1 
-        # action_map = {
-        #     0: (0, 0, 0),       # No rotation
-        #     1: (+1, 0, 0),      # Roll +
-        #     2: (-1, 0, 0),      # Roll -
-        #     3: (0, +1, 0),      # Pitch +
-        #     4: (0, -1, 0),      # Pitch -
-        #     5: (+1, +1, 0),     # Roll + Pitch
-        #     6: (+1, -1, 0),
-        #     7: (-1, +1, 0),
-        #     8: (-1, -1, 0),
-        # }
         action_map = {
-            0: (0, 0, 0),  # No rotation
-            1: (+angle_step, 0, 0),  # Roll +15°
-            2: (-angle_step, 0, 0),  # Roll -15°
-            3: (0, +angle_step, 0),  # Pitch +15°
-            4: (0, -angle_step, 0),  # Pitch -15°
-            5: (0, 0, +angle_step),  # Yaw +15°
-            6: (0, 0, -angle_step),  # Yaw -15°
-
-            # Two-axis rotations
-            7: (+angle_step, +angle_step, 0),  # Roll + Pitch
-            8: (+angle_step, -angle_step, 0),
-            9: (-angle_step, +angle_step, 0),
-            10: (-angle_step, -angle_step, 0),
-
-            11: (+angle_step, 0, +angle_step),  # Roll + Yaw
-            12: (+angle_step, 0, -angle_step),
-            13: (-angle_step, 0, +angle_step),
-            14: (-angle_step, 0, -angle_step),
-
-            15: (0, +angle_step, +angle_step),  # Pitch + Yaw
-            16: (0, +angle_step, -angle_step),
-            17: (0, -angle_step, +angle_step),
-            18: (0, -angle_step, -angle_step),
-
-            # Three-axis rotations
-            19: (+angle_step, +angle_step, +angle_step),
-            20: (+angle_step, +angle_step, -angle_step),
-            21: (+angle_step, -angle_step, +angle_step),
-            22: (+angle_step, -angle_step, -angle_step),
-
-            23: (-angle_step, +angle_step, +angle_step),
-            24: (-angle_step, +angle_step, -angle_step),
-            25: (-angle_step, -angle_step, +angle_step),
-            26: (-angle_step, -angle_step, -angle_step),
+            0: (0, 0, 0),       # No rotation
+            1: (+1, 0, 0),      # Roll +
+            2: (-1, 0, 0),      # Roll -
+            3: (0, +1, 0),      # Pitch +
+            4: (0, -1, 0),      # Pitch -
+            5: (+1, +1, 0),     # Roll + Pitch
+            6: (+1, -1, 0),
+            7: (-1, +1, 0),
+            8: (-1, -1, 0),
         }
+
 
 
         # Step 2: Initialize quaternion

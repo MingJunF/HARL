@@ -961,17 +961,17 @@ class SatBenchContinuousImagingFSWModel(ImagingFSWModel):
         self.insControl.controllerStatus = 1
         self.dynamics.instrumentPowerSink.powerStatus = 1
         # Step 1: Define rotations
-        angle_step = 1 
+        angle_step = 3 
         action_map = {
             0: (0, 0, 0),       # No rotation
-            1: (+1, 0, 0),      # Roll +
-            2: (-1, 0, 0),      # Roll -
-            3: (0, +1, 0),      # Pitch +
-            4: (0, -1, 0),      # Pitch -
-            5: (+1, +1, 0),     # Roll + Pitch
-            6: (+1, -1, 0),
-            7: (-1, +1, 0),
-            8: (-1, -1, 0),
+            1: (+angle_step, 0, 0),      # Roll +
+            2: (-angle_step, 0, 0),      # Roll -
+            3: (0, +angle_step, 0),      # Pitch +
+            4: (0, -angle_step, 0),      # Pitch -
+            5: (+angle_step, +angle_step, 0),     # Roll + Pitch
+            6: (+angle_step, -angle_step, 0),
+            7: (-angle_step, +angle_step, 0),
+            8: (-angle_step, -angle_step, 0),
         }
 
 

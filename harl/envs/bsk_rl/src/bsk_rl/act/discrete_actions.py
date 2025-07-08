@@ -258,7 +258,7 @@ class Image(DiscreteAction):
         self.fsw_action = name
         self.reset_task = False
         if duration is None:
-            duration = 4
+            duration = 12
         self.duration = duration
     def set_action(self, action: int, prev_action_key=None) -> str:
         """Activate the ``fsw_action`` function.

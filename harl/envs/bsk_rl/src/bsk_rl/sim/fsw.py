@@ -978,12 +978,12 @@ class SatBenchContinuousImagingFSWModel(ImagingFSWModel):
 
         # Step 2: Initialize quaternion
         if not hasattr(self, "q_sat"):
-            self.q_sat = R.from_quat([0, 0, 0, 1])  # Identity quaternion
-            # r_BN_N = np.array(self.dynamics.r_BN_N)
-            # nadir_vec = -r_BN_N / np.linalg.norm(r_BN_N)
-            # b_axis = np.array([0, 0, 1])  # camera looks along +Z body axis
+            #self.q_sat = R.from_quat([0, 0, 0, 1])  # Identity quaternion
+            r_BN_N = np.array(self.dynamics.r_BN_N)
+            nadir_vec = -r_BN_N / np.linalg.norm(r_BN_N)
+            b_axis = np.array([0, 0, 1])  # camera looks along +Z body axis
 
-            # self.q_sat = R.align_vectors([nadir_vec], [b_axis])[0]
+            self.q_sat = R.align_vectors([nadir_vec], [b_axis])[0]
 
 
         # Get rotation from action

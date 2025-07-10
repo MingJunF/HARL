@@ -147,7 +147,7 @@ def create_env(map_name, Target_type="SparseTarget", Num_targets=60,Target_densi
     scenario_module = __import__("bsk_rl.scene.targets", fromlist=[Target_type])
     scenario_cls = getattr(scenario_module, Target_type)
     scenario = scenario_cls(n_targets=Num_targets,cluster_radius=Target_density)
-    rewarder = RevisitImageReward()
+    rewarder = UniqueImageReward()
 
     env = ConstellationTasking(
         satellites=satellites,

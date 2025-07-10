@@ -92,7 +92,7 @@ class CustomSatComposed(sats.ImagingSatellite):
     ]
 
     action_spec = [
-        act.Image(n_ahead_image=9),
+        act.Image(n_ahead_image=15),
     ]
 
     class CustomDynModel(dyn.FullFeaturedDynModel):

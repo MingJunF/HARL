@@ -17,7 +17,7 @@ train:
   # number of total training steps
   num_env_steps: 150000000
   # number of steps per environment per training data collection
-  episode_length: 525
+  episode_length: 315
   # logging interval
   log_interval: 5
   # evaluation interval

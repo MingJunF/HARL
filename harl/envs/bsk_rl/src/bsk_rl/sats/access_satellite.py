@@ -68,7 +68,7 @@ class AccessSatellite(Satellite):
                 "type": "target",
                 "r_LP_P": np.array([0.0, 0.0, 0.1])
             }
-            for _ in range(7)
+            for _ in range(15)
         ]
 
     def reset_overwrite_previous(self) -> None:
@@ -455,17 +455,15 @@ class AccessSatellite(Satellite):
             next_opportunities = []
             for opportunity in upcoming_opportunities:
                 open_t, close_t = opportunity["window"]
-                if (open_t-400) <= sim_time <= (close_t):
-                    type = opportunity["type"]
-                    if (types is None or type in types) and filter(opportunity):
-                        next_opportunities.append(opportunity)
+                #if (open_t-400) <= sim_time <= (close_t):
+                type = opportunity["type"]
+                if (types is None or type in types) and filter(opportunity):
+                    next_opportunities.append(opportunity)
 
                 if len(next_opportunities) >= n:
                     self.using_dummy_padding = False
                     return next_opportunities
             #self.calculate_additional_windows(self.generation_duration)
-
-
         if pad and len(next_opportunities) >= 1:
             self.using_dummy_padding = False
             next_opportunities += [next_opportunities[-1]] * (

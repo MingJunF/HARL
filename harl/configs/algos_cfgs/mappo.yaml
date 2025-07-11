@@ -19,7 +19,7 @@ train:
   # number of steps per environment per training data collection
   episode_length: 1575
   # logging interval
-  log_interval: 5
+  log_interval: 2
   # evaluation interval
   eval_interval: 25
   # whether to use ValueNorm

@@ -13,11 +13,11 @@ device:
   torch_threads: 4
 train:
   # number of parallel environments for training data collection
-  n_rollout_threads: 10
+  n_rollout_threads: 30
   # number of total training steps
   num_env_steps: 150000000
   # number of steps per environment per training data collection
-  episode_length: 315
+  episode_length: 1575
   # logging interval
   log_interval: 5
   # evaluation interval
@@ -92,7 +92,7 @@ algo:
   critic_num_mini_batch: 1
   # coefficient for entropy term in actor loss
   #entropy_coef: 0.01
-  entropy_coef: 0.01
+  entropy_coef: 0.1
   # coefficient for value loss
   value_loss_coef: 1
   # whether to clip gradient norm

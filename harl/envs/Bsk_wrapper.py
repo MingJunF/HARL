@@ -86,13 +86,13 @@ class CustomSatComposed(sats.ImagingSatellite):
             dict(prop="priority"),
             dict(prop="r_LP_P", norm=orbitalMotion.REQ_EARTH * 1e3),
             dict(prop="target_angle", norm=np.pi),
-            n_ahead_observe=15,
+            n_ahead_observe=7,
         ),
         obs.NearbySatellitesAttitude()
     ]
 
     action_spec = [
-        act.Image(n_ahead_image=9),
+        act.Image(n_ahead_image=27),
     ]
 
     class CustomDynModel(dyn.FullFeaturedDynModel):

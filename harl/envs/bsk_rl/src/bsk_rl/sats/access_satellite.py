@@ -68,7 +68,7 @@ class AccessSatellite(Satellite):
                 "type": "target",
                 "r_LP_P": np.array([0.0, 0.0, 0.1])
             }
-            for _ in range(15)
+            for _ in range(7)
         ]
 
     def reset_overwrite_previous(self) -> None:
@@ -470,9 +470,6 @@ class AccessSatellite(Satellite):
                 n - len(next_opportunities)
             )
         else:
-            raise RuntimeError(
-                "No opportunities found! Use add_location_for_access_checking to add locations."
-            )
             self.using_dummy_padding = True
             return self.dummy_opportunities_template
 

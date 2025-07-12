@@ -463,7 +463,7 @@ class AccessSatellite(Satellite):
                 if len(next_opportunities) >= n:
                     self.using_dummy_padding = False
                     return next_opportunities
-            self.calculate_additional_windows(self.generation_duration)
+            #self.calculate_additional_windows(self.generation_duration)
         if pad and len(next_opportunities) >= 1:
             self.using_dummy_padding = False
             next_opportunities += [next_opportunities[-1]] * (

@@ -17,7 +17,7 @@ train:
   # number of total training steps
   num_env_steps: 15000000
   # number of steps per environment per training data collection
-  episode_length: 15750
+  episode_length: 315
   # logging interval
   log_interval: 2
   # evaluation interval
@@ -91,7 +91,7 @@ algo:
   # number of mini-batches per epoch for critic update
   critic_num_mini_batch: 1
   # coefficient for entropy term in actor loss
-  entropy_coef: 0.1
+  entropy_coef: 0.01
   # coefficient for value loss
   value_loss_coef: 1
   # whether to clip gradient norm

@@ -68,7 +68,7 @@ class AccessSatellite(Satellite):
                 "type": "target",
                 "r_LP_P": np.array([0.0, 0.0, 0.1])
             }
-            for _ in range(7)
+            for _ in range(15)
         ]
 
     def reset_overwrite_previous(self) -> None:
@@ -408,7 +408,7 @@ class AccessSatellite(Satellite):
         self,
         n: int,
         pad: bool = True,
-        max_lookahead: int = 2,
+        max_lookahead: int = 1,
         types: Optional[Union[str, list[str]]] = None,
         filter: Union[Optional[Callable], list] = None,
     ) -> list[dict]:

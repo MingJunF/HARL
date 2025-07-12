@@ -13,11 +13,11 @@ device:
   torch_threads: 4
 train:
   # number of parallel environments for training data collection
-  n_rollout_threads: 30
+  n_rollout_threads: 1
   # number of total training steps
   num_env_steps: 150000000
   # number of steps per environment per training data collection
-  episode_length: 15750
+  episode_length: 315
   # logging interval
   log_interval: 2
   # evaluation interval
@@ -29,7 +29,8 @@ train:
   # whether to consider the case of truncation when an episode is done
   use_proper_time_limits: True
   # if set, load models from this directory; otherwise, randomly initialise the models
-  model_dir: ~
+  model_dir: "results/SatBench/bsk/mappo/test/seed-00001-2025-07-11-00-11-52/models"
+
 eval:
   # whether to use evaluation
   use_eval: False
@@ -58,7 +59,7 @@ model:
   # whether to use rnn policy (data is not chunked for training)
   use_naive_recurrent_policy: False
   # whether to use rnn policy (data is chunked for training)
-  use_recurrent_policy: True
+  use_recurrent_policy: False
   # number of recurrent layers
   recurrent_n: 1
   # length of data chunk; only useful when use_recurrent_policy is True; episode_length has to be a multiple of data_chunk_length
@@ -92,7 +93,7 @@ algo:
   critic_num_mini_batch: 1
   # coefficient for entropy term in actor loss
   #entropy_coef: 0.01
-  entropy_coef: 0.1
+  entropy_coef: 0.01
   # coefficient for value loss
   value_loss_coef: 1
   # whether to clip gradient norm

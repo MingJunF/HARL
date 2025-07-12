@@ -201,4 +201,4 @@ class BaseLogger:
     def close(self):
         """Close the logger."""
         self.log_file.close()
-        wandb.finish()
+        #wandb.finish()

@@ -17,7 +17,7 @@ train:
   # number of total training steps
   num_env_steps: 15000000
   # number of steps per environment per training data collection
-  episode_length: 1575
+  episode_length: 15750
   # logging interval
   log_interval: 2
   # evaluation interval
@@ -62,7 +62,7 @@ model:
   # number of recurrent layers
   recurrent_n: 1
   # length of data chunk; only useful when use_recurrent_policy is True; episode_length has to be a multiple of data_chunk_length
-  data_chunk_length: 10
+  data_chunk_length: 25
   # optimizer parameters
   # actor learning rate
   lr: 0.0005

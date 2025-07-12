@@ -114,7 +114,7 @@ class CustomSatComposed(sats.ImagingSatellite):
 def create_env(map_name, Target_type="SparseTarget", Num_targets=60,Target_density=400000,  Sat_orb_param="2SatCluster.xlsx",render=False):
     file_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "../../Satellites", Sat_orb_param))
     df = pd.read_excel(file_path)
-
+    print(Num_targets)
     satellites = []
     for _, row in df.iterrows():
         name = row["name"].replace(" ", "_")
@@ -180,6 +180,7 @@ class BSKWrapper(MultiAgentEnv):
             map_name=self.map_name,
             Sat_orb_param=self.Sat_orb_param,
             Target_type=self.Target_type,
+            Num_targets=self.Num_targets,
             Target_density=self.Target_density,
             render=self.render,
         )

@@ -157,7 +157,7 @@ class RevisitImageReward(GlobalReward):
                 continue
 
             for sat_id, t in observations:
-                if sat_id != first_sat and sat_id != "HIST" and abs(t - first_time) <= 300:
+                if sat_id != first_sat and sat_id != "HIST" and abs(t - first_time) <= 100:
                     reward[sat_id] += 1.0  
                     self.Completeness[target] = 1.0
                     break

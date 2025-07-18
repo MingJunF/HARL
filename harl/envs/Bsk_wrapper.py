@@ -231,7 +231,7 @@ class BSKWrapper(MultiAgentEnv):
         self.Num_targets = env_args.get("Num_targets", 150)
         self.Target_density = env_args.get("Target_density", 800000)
         self.Sat_orb_param = env_args.get("Sat_orb_param", "4SatsConstellation.xlsx")
-        self.render = env_args.get("render", True)
+        self.render = env_args.get("render", False)
 
         assert isinstance(self.Sat_orb_param, str), f"Sat_orb_param must be a string, got {type(self.Sat_orb_param)}"
 

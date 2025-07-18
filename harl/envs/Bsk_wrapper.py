@@ -70,7 +70,7 @@ class MultiAgentEnv(object):
     def get_stats(self):
         return {}
 
-class CustomSatComposed(sats.ImagingSatellite):
+class CustomSatComposed10(sats.ImagingSatellite):
     observation_spec = [
         obs.Time(),
         obs.SatProperties(
@@ -109,14 +109,53 @@ class CustomSatComposed(sats.ImagingSatellite):
             return error_angle / np.pi
 
     dyn_type = CustomDynModel
-    fsw_type = fsw.UniqueImagerFSWModel
+    fsw_type = fsw.UniqueImagerFSWModel10
+class CustomSatComposed20(sats.ImagingSatellite):
+    observation_spec = [
+        obs.Time(),
+        obs.SatProperties(
+            dict(prop="omega_BP_P", norm=0.03),
+            dict(prop="c_hat_P"),
+            dict(prop="r_BN_P", norm=orbitalMotion.REQ_EARTH * 1e3),
+            dict(prop="v_BN_P", norm=7616.5),
+            dict(prop="FOV"),         
+        ),
+        obs.OpportunityProperties(
+            dict(prop="opportunity_open", norm=6300),
+            dict(prop="opportunity_close", norm=6300),
+            dict(prop="priority"),
+            dict(prop="r_LP_P", norm=orbitalMotion.REQ_EARTH * 1e3),
+            dict(prop="target_angle", norm=np.pi),
+            n_ahead_observe=15,
+        ),
+        obs.NearbySatellitesAttitude()
+    ]
 
+    action_spec = [
+        act.Image(n_ahead_image=9),
+    ]
+
+    class CustomDynModel(dyn.FullFeaturedDynModel):
+        @property
+        def solar_angle_norm(self) -> float:
+            sun_vec_N = self.world.gravFactory.spiceObject.planetStateOutMsgs[
+                self.world.sun_index
+            ].read().PositionVector
+            sun_vec_N_hat = sun_vec_N / np.linalg.norm(sun_vec_N)
+            solar_panel_vec_B = np.array([0, 0, -1])
+            mat = self.BN.T
+            solar_panel_vec_N = mat @ solar_panel_vec_B
+            error_angle = np.arccos(np.clip(np.dot(solar_panel_vec_N, sun_vec_N_hat), -1.0, 1.0))
+            return error_angle / np.pi
+
+    dyn_type = CustomDynModel
+    fsw_type = fsw.UniqueImagerFSWModel20
 def create_env(map_name, Target_type="SparseTarget", Num_targets=60,Target_density=400000,  Sat_orb_param="2SatCluster.xlsx",render=False):
     file_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "../../Satellites", Sat_orb_param))
     df = pd.read_excel(file_path)
-    print(Num_targets)
     satellites = []
-    for _, row in df.iterrows():
+   
+    for idx, row in df.iterrows():
         name = row["name"].replace(" ", "_")
         oe = ClassicElements()
         oe.a = row["k"] * 1000
@@ -126,23 +165,43 @@ def create_env(map_name, Target_type="SparseTarget", Num_targets=60,Target_densi
         oe.omega = row["\u03c9"] * macros.D2R
         oe.f = row["M"] * macros.D2R
 
-        sat_args = CustomSatComposed.default_sat_args(
-            oe=oe,
-            imageAttErrorRequirement=1,
-            imageRateErrorRequirement=1,
-            batteryStorageCapacity=80.0 * 3600 * 40,
-            storedCharge_Init=np.random.uniform(1, 1) * 80.0 * 3600 * 40,
-            u_max=0.2,
-            K1=0.5,
-            dataStorageCapacity=100,
-            nHat_B=np.array([1, 0, 0]),
-            imageTargetMinimumElevation=np.radians(20),
-            rwBasePower=20,
-            maxWheelSpeed=1500,
-            storageInit=0,
-            wheelSpeeds=np.random.uniform(-1, 1, 3),
-        )
-        satellites.append(CustomSatComposed(name, sat_args))
+        if idx % 2 == 0:
+            sat_args = CustomSatComposed10.default_sat_args(
+                oe=oe,
+                imageAttErrorRequirement=1,
+                imageRateErrorRequirement=1,
+                batteryStorageCapacity=80.0 * 3600 * 40,
+                storedCharge_Init=np.random.uniform(1, 1) * 80.0 * 3600 * 40,
+                u_max=0.2,
+                K1=0.5,
+                dataStorageCapacity=100,
+                nHat_B=np.array([1, 0, 0]),
+                imageTargetMinimumElevation=np.radians(20),
+                rwBasePower=20,
+                maxWheelSpeed=1500,
+                storageInit=0,
+                wheelSpeeds=np.random.uniform(-1, 1, 3),
+            )
+            satellites.append(CustomSatComposed10(name, sat_args))
+        else:
+            sat_args = CustomSatComposed20.default_sat_args(
+                oe=oe,
+                imageAttErrorRequirement=1,
+                imageRateErrorRequirement=1,
+                batteryStorageCapacity=80.0 * 3600 * 40,
+                storedCharge_Init=np.random.uniform(1, 1) * 80.0 * 3600 * 40,
+                u_max=0.2,
+                K1=0.5,
+                dataStorageCapacity=100,
+                nHat_B=np.array([1, 0, 0]),
+                imageTargetMinimumElevation=np.radians(20),
+                rwBasePower=20,
+                maxWheelSpeed=1500,
+                storageInit=0,
+                wheelSpeeds=np.random.uniform(-1, 1, 3),
+            )
+            satellites.append(CustomSatComposed20(name, sat_args))
+
 
     scenario_module = __import__("bsk_rl.scene.targets", fromlist=[Target_type])
     scenario_cls = getattr(scenario_module, Target_type)
@@ -171,8 +230,8 @@ class BSKWrapper(MultiAgentEnv):
         self.Target_type = env_args.get("Target_type", "SparseTarget")
         self.Num_targets = env_args.get("Num_targets", 150)
         self.Target_density = env_args.get("Target_density", 800000)
-        self.Sat_orb_param = env_args.get("Sat_orb_param", "6SatsConstellation.xlsx")
-        self.render = env_args.get("render", False)
+        self.Sat_orb_param = env_args.get("Sat_orb_param", "4SatsConstellation.xlsx")
+        self.render = env_args.get("render", True)
 
         assert isinstance(self.Sat_orb_param, str), f"Sat_orb_param must be a string, got {type(self.Sat_orb_param)}"
 

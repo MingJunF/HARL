@@ -228,9 +228,9 @@ class BSKWrapper(MultiAgentEnv):
     def __init__(self, env_args):
         self.map_name = env_args.get("map_name", "Scenario1")
         self.Target_type = env_args.get("Target_type", "SparseTarget")
-        self.Num_targets = env_args.get("Num_targets", 150)
-        self.Target_density = env_args.get("Target_density", 800000)
-        self.Sat_orb_param = env_args.get("Sat_orb_param", "4SatsConstellation.xlsx")
+        self.Num_targets = env_args.get("Num_targets", 100)
+        self.Target_density = env_args.get("Target_density", 600000)
+        self.Sat_orb_param = env_args.get("Sat_orb_param", "4SatsConstellation4.xlsx")
         self.render = env_args.get("render", False)
 
         assert isinstance(self.Sat_orb_param, str), f"Sat_orb_param must be a string, got {type(self.Sat_orb_param)}"

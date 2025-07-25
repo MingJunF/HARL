@@ -877,7 +877,7 @@ class SatBenchContinuousImagingFSWModel10(ImagingFSWModel):
         def update(self):
             """check if a target is within FOV"""
 
-            attErrTolerance = np.radians(10) 
+            attErrTolerance = np.radians(15) 
             min_elevation_rad = np.radians(35)  
             max_range = 1000000  
             bits_per_image = 1
@@ -1135,7 +1135,7 @@ class SatBenchContinuousImagingFSWModel20(ImagingFSWModel):
         def update(self):
             """check if a target is within FOV"""
 
-            attErrTolerance = np.radians(20) 
+            attErrTolerance = np.radians(15) 
             min_elevation_rad = np.radians(35)  
             max_range = 1000000  
             bits_per_image = 1

@@ -103,20 +103,11 @@ class GeneralSatelliteTasking(Env, Generic[SatObs, SatAct]):
         """
         self.seed = None
         self._configure_logging(log_level, log_dir)
-        print(vizard_dir)
-        if render:
-            vizard.VIZARD_PATH = "/mnt/d/Github_Code/basilisk"
-            if vizard_settings is not None:
-                logger.warning(
-                    "Vizard settings provided but Vizard is not enabled. Ignoring settings."
-                )
-        self.vizard_settings = dict(showLocationLabels=1)
-
         self.map_name = map_name  
         if isinstance(satellites, Satellite):
             satellites = [satellites]
         self.satellites = deepcopy(satellites)
-
+        self.vizard_settings = dict(showLocationLabels=1)
         while True:
             for satellite in self.satellites:
                 if [sat.name for sat in self.satellites].count(satellite.name) > 1:
@@ -260,6 +251,16 @@ class GeneralSatelliteTasking(Env, Generic[SatObs, SatAct]):
         """
         # Explicitly delete the Basilisk simulation before creating a new one.
         self.delete_simulator()
+        if options==False:
+            render=False
+        else:
+            render = self.render
+        if render:
+            vizard.VIZARD_PATH = "/mnt/d/Github_Code/basilisk"
+            # if vizard_settings is not None:
+            #     logger.warning(
+            #         "Vizard settings provided but Vizard is not enabled. Ignoring settings."
+            #     )
 
         self.episode_base_reward = 0.0  # Sum base reward
         self.num_image=0

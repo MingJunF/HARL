@@ -17,9 +17,9 @@ train:
   # number of total training steps
   num_env_steps: 15000000
   # number of steps per environment per training data collection
-  episode_length: 150
+  episode_length: 315
   # logging interval
-  log_interval: 5
+  log_interval: 2
   # evaluation interval
   eval_interval: 25
   # whether to use ValueNorm
@@ -32,7 +32,7 @@ train:
   model_dir: ~
 eval:
   # whether to use evaluation
-  use_eval: True
+  use_eval: False
   # number of parallel environments for evaluation
   n_eval_rollout_threads: 10
   # number of episodes per evaluation
